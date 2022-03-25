@@ -1,6 +1,24 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  UserCredential userCredential =
+      await FirebaseAuth.instance.signInAnonymously();
+
+  if (userCredential.user != null) {
+    await FirebaseAnalytics.instance.setUserId(id: userCredential.user!.uid);
+  }
+
   runApp(const MyApp());
 }
 
@@ -50,7 +68,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
+    await FirebaseAnalytics.instance.logEvent(
+      name: "increment counter clicked",
+    );
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
