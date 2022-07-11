@@ -18,6 +18,7 @@ class MangaListCubit extends Cubit<MangaListState> {
     try {
       final db = await repository.isar;
       final items = await db.mangas.where().findAll();
+
       emit(MangaListState.success(items));
     } on Exception {
       emit(const MangaListState.failure());

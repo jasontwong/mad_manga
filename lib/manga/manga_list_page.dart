@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mad_manga/manga/manga_list_cubit.dart';
 import 'package:mad_manga/repository.dart';
 import 'package:mad_manga/schemas/manga.dart';
+import 'package:mad_manga/manga/manga_find_page.dart';
 
 class MangaListPage extends StatelessWidget {
   const MangaListPage({Key? key}) : super(key: key);
@@ -16,21 +17,23 @@ class MangaListPage extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(title: const Text('Manga List')),
           body: const MangaListView(),
-          floatingActionButton: const MangaAddView(),
+          floatingActionButton: const MangaAddButton(),
         ));
   }
 }
 
-class MangaAddView extends StatelessWidget {
-  const MangaAddView({Key? key}) : super(key: key);
+class MangaAddButton extends StatelessWidget {
+  const MangaAddButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          final manga = Manga()..name = 'My Other Manga';
-          context.read<MangaListCubit>().addItem(manga);
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_context) => BlocProvider.value(
+                  value: BlocProvider.of<MangaListCubit>(context),
+                  child: const MangaFindPage())));
         });
   }
 }
@@ -85,7 +88,6 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: ListTile(
-        leading: Text('#${item.id}'),
         title: Text(item.name),
       ),
     );

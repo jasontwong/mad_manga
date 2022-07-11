@@ -8,4 +8,10 @@ class Manga {
   int? id;
 
   late String name;
+
+  @Index(unique: true)
+  late String uri;
+
+  @Ignore()
+  bool selected = false;
 }
