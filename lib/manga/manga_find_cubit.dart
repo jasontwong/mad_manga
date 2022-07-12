@@ -26,20 +26,22 @@ class MangaFindCubit extends Cubit<MangaFindState> {
         return item;
       }).toList());
 
-      print('fetchFind');
-
       emit(MangaFindState.success(mangas));
     } on Exception {
       emit(const MangaFindState.failure());
     }
   }
 
-  Future<void> selectItem(Manga item) async {
+  Future<void> addItem(Manga item) async {
     try {
+      final db = await repository.isar;
+      await db.writeTxn((isar) async {
+        item.id = await db.mangas.put(item);
+      });
+
       final selectSuccess = List.of(state.items).map((Manga manga) {
         if (manga.uri == item.uri) {
           manga.selected = true;
-          print(true);
         }
 
         return manga;

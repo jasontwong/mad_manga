@@ -30,10 +30,10 @@ class MangaAddButton extends StatelessWidget {
     return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (_context) => BlocProvider.value(
-                  value: BlocProvider.of<MangaListCubit>(context),
-                  child: const MangaFindPage())));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (_context) => const MangaFindPage()))
+              .then((value) => context.read<MangaListCubit>().fetchList());
         });
   }
 }

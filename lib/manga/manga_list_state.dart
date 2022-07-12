@@ -20,4 +20,14 @@ class MangaListState extends Equatable {
 
   @override
   List<Object> get props => [status, items];
+
+  @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+
+    return o is MangaListState && o.status == status && o.items == items;
+  }
+
+  @override
+  int get hashCode => items.hashCode;
 }

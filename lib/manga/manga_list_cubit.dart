@@ -24,19 +24,4 @@ class MangaListCubit extends Cubit<MangaListState> {
       emit(const MangaListState.failure());
     }
   }
-
-  Future<void> addItem(Manga item) async {
-    try {
-      final db = await repository.isar;
-      await db.writeTxn((isar) async {
-        item.id = await db.mangas.put(item);
-      });
-
-      final addSuccess = List.of(state.items)..add(item);
-
-      emit(MangaListState.success(addSuccess));
-    } on Exception {
-      emit(const MangaListState.failure());
-    }
-  }
 }

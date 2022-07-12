@@ -80,8 +80,7 @@ class ItemTile extends StatelessWidget {
         title: Text(item.name),
         trailing: icon,
         onTap: () {
-          context.read<MangaListCubit>().addItem(item);
-          context.read<MangaFindCubit>().selectItem(item);
+          context.read<MangaFindCubit>().addItem(item);
         },
       ),
     );
