@@ -24,4 +24,19 @@ class MangaListCubit extends Cubit<MangaListState> {
       emit(const MangaListState.failure());
     }
   }
+
+  Future<void> removeItem(Manga item) async {
+    try {
+      final db = await repository.isar;
+      await db.writeTxn((isar) async {
+        await db.mangas.delete(item.id!);
+      });
+
+      final items = await db.mangas.where().findAll();
+
+      emit(MangaListState.success(items));
+    } on Exception {
+      emit(const MangaListState.failure());
+    }
+  }
 }

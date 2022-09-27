@@ -1,36 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mad_manga/manga/manga_find_cubit.dart';
+import 'package:mad_manga/manga/manga_detail_cubit.dart';
 import 'package:mad_manga/schemas/manga.dart';
 import 'package:mad_manga/repository.dart';
+import 'package:mad_manga/schemas/manga_chapter.dart';
 
-class MangaFindPage extends StatelessWidget {
-  const MangaFindPage({Key? key}) : super(key: key);
+class MangaDetailPage extends StatelessWidget {
+  const MangaDetailPage({Key? key, required this.item}) : super(key: key);
+
+  final Manga item;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Manga Find')),
+        appBar: AppBar(title: const Text('Manga Detail')),
         body: BlocProvider(
-            create: (_) => MangaFindCubit(
+            create: (_) => MangaDetailCubit(
                   repository: context.read<Repository>(),
-                )..fetchFind(),
-            child: const MangaFindView()));
+                  manga: item,
+                )..fetchChapters(),
+            child: const MangaDetailView()));
   }
 }
 
-class MangaFindView extends StatelessWidget {
-  const MangaFindView({Key? key}) : super(key: key);
+class MangaDetailView extends StatelessWidget {
+  const MangaDetailView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<MangaFindCubit>().state;
+    final state = context.watch<MangaDetailCubit>().state;
 
     switch (state.status) {
-      case FindStatus.failure:
+      case DetailStatus.failure:
         return const Center(child: Text('Oops something went wrong!'));
-      case FindStatus.success:
-        return ItemView(items: state.items);
+      case DetailStatus.success:
+        return ItemView(items: state.chapters);
       default:
         return const Center(child: CircularProgressIndicator());
     }
@@ -40,7 +44,7 @@ class MangaFindView extends StatelessWidget {
 class ItemView extends StatelessWidget {
   const ItemView({Key? key, required this.items}) : super(key: key);
 
-  final List<Manga> items;
+  final List<MangaChapter> items;
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +52,7 @@ class ItemView extends StatelessWidget {
         ? const Center(child: Text('no content'))
         : ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              Manga item = items[index];
-              Icon icon = item.selected
-                  ? const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    )
-                  : const Icon(Icons.check_circle_outline);
-              return ItemTile(item: items[index], icon: icon);
+              return ItemTile(item: items[index]);
             },
             itemCount: items.length,
           );
@@ -66,20 +63,17 @@ class ItemTile extends StatelessWidget {
   const ItemTile({
     Key? key,
     required this.item,
-    required this.icon,
   }) : super(key: key);
 
-  final Manga item;
-  final Icon icon;
+  final MangaChapter item;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: ListTile(
         title: Text(item.name),
-        trailing: icon,
         onTap: () {
-          context.read<MangaFindCubit>().addItem(item);
+          // context.read<MangaDetailCubit>().addItem(item);
         },
       ),
     );

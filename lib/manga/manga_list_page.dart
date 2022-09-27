@@ -4,6 +4,7 @@ import 'package:mad_manga/manga/manga_list_cubit.dart';
 import 'package:mad_manga/repository.dart';
 import 'package:mad_manga/schemas/manga.dart';
 import 'package:mad_manga/manga/manga_find_page.dart';
+import 'package:mad_manga/manga/manga_detail_page.dart';
 
 class MangaListPage extends StatelessWidget {
   const MangaListPage({Key? key}) : super(key: key);
@@ -88,8 +89,17 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: ListTile(
-        title: Text(item.name),
-      ),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              context.read<MangaListCubit>().removeItem(item);
+            },
+          ),
+          title: Text(item.name),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_context) => MangaDetailPage(item: item)));
+          }),
     );
   }
 }
